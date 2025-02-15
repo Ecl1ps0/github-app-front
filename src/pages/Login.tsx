@@ -2,7 +2,6 @@ import React from "react";
 import { Form, Input, Button, Typography, message, Card } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router";
-import axios from "axios";
 import { setUser } from "../shared/store/user.store";
 import { useDispatch } from "react-redux";
 import { instance } from "../shared/axios";
