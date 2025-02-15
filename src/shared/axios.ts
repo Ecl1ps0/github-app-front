@@ -6,16 +6,16 @@ export const instance = axios.create({
 });
 
 instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     if (error.response) {
-      notification.error({
-        message: "Error",
-        description: error.response?.data,
-        duration: 5,
-      });
+      setTimeout(() => {
+        notification.error({
+          message: "Request Failed",
+          description: error.response.data || "An error occurred",
+          duration: 5,
+        });
+      }, 0);
     }
     return Promise.reject(error);
   }
