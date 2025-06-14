@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Input, Button } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import { Message } from "../models/Message.entity";
+import { useLazyGetUserQuery } from "../shared/api/user.api";
 
 const { TextArea } = Input;
 
@@ -16,6 +17,29 @@ const TextChatArea: React.FC<TextChatAreaProps> = ({
   messages,
 }) => {
   const [newMessage, setNewMessage] = useState("");
+  const [usernames, setUsernames] = useState<{ [key: string]: string }>({});
+  const [getUser] = useLazyGetUserQuery();
+
+  // Fetch usernames for each unique sender_id
+  useEffect(() => {
+    const fetchUsernames = async () => {
+      const uniqueSenderIds = Array.from(
+        new Set(messages.map((msg) => msg.sender_id))
+      );
+      const fetchedUsernames: { [key: string]: string } = {};
+
+      for (const senderId of uniqueSenderIds) {
+        const { data: user } = await getUser(senderId);
+        if (user) {
+          fetchedUsernames[senderId] = user.username; // Assuming user has a username property
+        }
+      }
+
+      setUsernames(fetchedUsernames);
+    };
+
+    fetchUsernames();
+  }, [messages]);
 
   return (
     <>
@@ -41,7 +65,8 @@ const TextChatArea: React.FC<TextChatAreaProps> = ({
               boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <strong>{msg.sender_id}</strong>: {msg.content}
+            <strong>{usernames[msg.sender_id] || msg.sender_id}</strong>:{" "}
+            {msg.content}
           </div>
         ))}
       </div>
@@ -51,7 +76,6 @@ const TextChatArea: React.FC<TextChatAreaProps> = ({
           onChange={(e) =>
             !!e.target.value.length && setNewMessage(e.target.value)
           }
-          // onPressEnter={handleSendMessage}
           style={{ flexGrow: 1, borderRadius: "6px" }}
           rows={2}
           placeholder="Type a message..."

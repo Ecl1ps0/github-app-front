@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { notification } from "antd";
+import { User } from "../../models/User.entity";
 
 export const userApi = createApi({
   reducerPath: "userApi",
@@ -31,7 +32,21 @@ export const userApi = createApi({
         }
       },
     }),
+    getUser: builder.query<User, string>({
+      query: (userId) => `/${userId}`,
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          notification.error({
+            message: "Error",
+            description: error as string,
+            duration: 5,
+          });
+        }
+      },
+    }),
   }),
 });
 
-export const { usePostJoinChannelMutation } = userApi;
+export const { usePostJoinChannelMutation, useLazyGetUserQuery } = userApi;
