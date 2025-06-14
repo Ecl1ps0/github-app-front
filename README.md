@@ -74,10 +74,10 @@ npm run dev
 3. **Open in Browser**Once the server is running, open your browser and go to:
 
 ```
-http://localhost:5173
+http://localhost:3000
 
 ```
 
-   (Note: The port may vary based on your Vite configuration.)
+(Note: The port may vary based on your Vite configuration.)
 
 4. **Hot Module Replacement (HMR**)The application supports Hot Module Replacement, so any changes you make to the code will automatically refresh the browser.
